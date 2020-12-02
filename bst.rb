@@ -1,13 +1,4 @@
-require 'pry'
-
-module Comparable
-
-  # compare nodes using their 'data' attributes
-
-end
-
 class Node
-  include Comparable
 
   attr_accessor :left, :right, :data
 
@@ -175,16 +166,24 @@ class Tree
     self.root = build_tree(data)
   end
 
+  # visualize binary search tree, method by student on Discord
+
+  def pretty_print(node = root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
+
   private
 
   # helper method that finds the leftmost leaf
   
-    def leftmost_leaf(node)
-      until node.left.nil?
-        node = node.left
-      end
-      node
+  def leftmost_leaf(node)
+    until node.left.nil?
+      node = node.left
     end
+    node
+  end
 
   # create inorder array of tree
   
@@ -198,7 +197,52 @@ class Tree
   end
 end
 
-array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-tree = Tree.new(array)
-binding.pry
-puts tree.depth
+# Driver script
+
+array = Array.new(15) { rand(1..100) }
+bst = Tree.new(array)
+
+bst.pretty_print
+
+puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+
+puts "Level order traversal: "
+puts bst.level_order
+
+puts "Preorder traversal: "
+puts bst.preorder
+
+puts "Inorder traversal: "
+puts bst.inorder
+
+puts "Postorder traversal: "
+puts bst.postorder
+
+10.times do
+  a = rand(100..150)
+  bst.insert(a)
+  puts "Inserted #{a} to tree."
+end
+
+bst.pretty_print
+
+puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+
+puts "Rebalancig tree..."
+bst.rebalance
+
+bst.pretty_print
+
+puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+
+puts "Level order traversal: "
+puts bst.level_order
+
+puts "Preorder traversal: "
+puts bst.preorder
+
+puts "Inorder traversal: "
+puts bst.inorder
+
+puts "Postorder traversal: "
+puts bst.postorder
