@@ -1,5 +1,6 @@
-class Node
+# frozen_string_literal: true
 
+class Node
   attr_accessor :left, :right, :data
 
   def initialize(data)
@@ -10,7 +11,6 @@ class Node
 end
 
 class Tree
-
   attr_accessor :root, :data
 
   def initialize(array)
@@ -50,7 +50,7 @@ class Tree
   def delete(value, node = root)
     return node if node.nil?
 
-    if value < node.data 
+    if value < node.data
       node.left = delete(value, node.left)
     elsif value > node.data
       node.right = delete(value, node.right)
@@ -59,7 +59,7 @@ class Tree
       return node.right if node.left.nil?
       return node.left if node.right.nil?
 
-      #if node has two children
+      # if node has two children
       leftmost_node = leftmost_leaf(node.right)
       node.data = leftmost_node.data
       node.right = delete(leftmost_node.data, node.right)
@@ -81,7 +81,8 @@ class Tree
     print "#{node.data} "
     queue << node.left unless node.left.nil?
     queue << node.right unless node.right.nil?
-    return nil if queue.empty?
+    return if queue.empty?
+
     level_order(queue.shift, queue)
   end
 
@@ -90,29 +91,29 @@ class Tree
 
   def preorder(node = root)
     # Root Left Right
-    unless node.nil?
-      print "#{node.data} "
-      preorder(node.left)
-      preorder(node.right)
-    end
+    return if node.nil?
+
+    print "#{node.data} "
+    preorder(node.left)
+    preorder(node.right)
   end
 
   def inorder(node = root)
     # Left Root Right
-    unless node.nil?
-      inorder(node.left)
-      print "#{node.data} "
-      inorder(node.right)
-    end
+    return if node.nil?
+
+    inorder(node.left)
+    print "#{node.data} "
+    inorder(node.right)
   end
 
   def postorder(node = root)
     # Left Right Root
-    unless node.nil?
-      postorder(node.left)
-      postorder(node.right)
-      print "#{node.data} "
-    end
+    return if node.nil?
+
+    postorder(node.left)
+    postorder(node.right)
+    print "#{node.data} "
   end
 
   # accepts a node and returns its height. Returns -1 if node doesn't exist
@@ -120,11 +121,12 @@ class Tree
 
   def height(node = root)
     unless node.nil? || node == root
-      node = (node.class == Node ? find(node.data) : find(node))
+      node = (node.instance_of?(Node) ? find(node.data) : find(node))
     end
 
     return -1 if node.nil?
-    return [height(node.left), height(node.right)].max + 1
+
+    [height(node.left), height(node.right)].max + 1
   end
 
   # accepts a node and returns its depth. Returns -1 if node doesn't exist
@@ -145,7 +147,7 @@ class Tree
     end
   end
 
-  # checks if tree is balanced: the difference between the heights of left subtree 
+  # checks if tree is balanced: the difference between the heights of left subtree
   # and right subtree of every node is not more than 1
 
   def balanced?(node = root)
@@ -177,16 +179,15 @@ class Tree
   private
 
   # helper method that finds the leftmost leaf
-  
+
   def leftmost_leaf(node)
-    until node.left.nil?
-      node = node.left
-    end
+    node = node.left until node.left.nil?
+
     node
   end
 
   # create inorder array of tree
-  
+
   def inorder_array(node = root, array = [])
     unless node.nil?
       inorder_array(node.left, array)
@@ -204,18 +205,18 @@ bst = Tree.new(array)
 
 bst.pretty_print
 
-puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+puts bst.balanced? ? 'Your Binary Search Tree is balanced.' : 'Your Binary Search Tree is not balanced.'
 
-puts "Level order traversal: "
+puts 'Level order traversal: '
 puts bst.level_order
 
-puts "Preorder traversal: "
+puts 'Preorder traversal: '
 puts bst.preorder
 
-puts "Inorder traversal: "
+puts 'Inorder traversal: '
 puts bst.inorder
 
-puts "Postorder traversal: "
+puts 'Postorder traversal: '
 puts bst.postorder
 
 10.times do
@@ -226,23 +227,23 @@ end
 
 bst.pretty_print
 
-puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+puts bst.balanced? ? 'Your Binary Search Tree is balanced.' : 'Your Binary Search Tree is not balanced.'
 
-puts "Rebalancig tree..."
+puts 'Rebalancig tree...'
 bst.rebalance
 
 bst.pretty_print
 
-puts bst.balanced? ? "Your Binary Search Tree is balanced." : "Your Binary Search Tree is not balanced."
+puts bst.balanced? ? 'Your Binary Search Tree is balanced.' : 'Your Binary Search Tree is not balanced.'
 
-puts "Level order traversal: "
+puts 'Level order traversal: '
 puts bst.level_order
 
-puts "Preorder traversal: "
+puts 'Preorder traversal: '
 puts bst.preorder
 
-puts "Inorder traversal: "
+puts 'Inorder traversal: '
 puts bst.inorder
 
-puts "Postorder traversal: "
+puts 'Postorder traversal: '
 puts bst.postorder
