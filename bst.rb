@@ -9,19 +9,18 @@ end
 class Node
   include Comparable
 
-  attr_accessor :left, :right, :data, :height
+  attr_accessor :left, :right, :data
 
   def initialize(data)
     @data = data
     @left = nil
     @right = nil
-    @height = 0
   end
 end
 
 class Tree
 
-  attr_reader :root, :data # attr_accessor ?
+  attr_accessor :root, :data
 
   def initialize(array)
     @data = array.sort.uniq
@@ -77,15 +76,6 @@ class Tree
     node
   end
 
-  # helper method that finds the leftmost leaf
-  
-  def leftmost_leaf(node)
-    until node.left.nil?
-      node = node.left
-    end
-    node
-  end
-
   # returns the node with the given value, returns nil if node is not found
 
   def find(value, node = root)
@@ -134,30 +124,25 @@ class Tree
     end
   end
 
-  # accepts a node and returns its height, also sets the height for each node
+  # accepts a node and returns its height. Returns -1 if node doesn't exist
   # height: number of edges from a node to the lowest leaf in its subtree
 
   def height(node = root)
-    
-    node = find(node) unless node.nil? || node.class == Node
-
-    unless node.nil?
-      height(node.left)
-      height(node.right)
-      unless node.left.nil? && node.right.nil?
-        node.height = (node.left.nil? ? node.right.height + 1 : node.left.height + 1)
-      end
+    unless node.nil? || node == root
+      node = (node.class == Node ? find(node.data) : find(node))
     end
 
-    return node.nil? ? nil : node.height
+    return -1 if node.nil?
+    return [height(node.left), height(node.right)].max + 1
   end
 
-  # accepts a node and returns its depth
+  # accepts a node and returns its depth. Returns -1 if node doesn't exist
   # depth: number of edges from the root to the given node
 
   def depth(node = root, parent = root, edges = 0)
     return 0 if node == parent
-    
+    return -1 if parent.nil?
+
     if node < parent.data
       edges += 1
       depth(node, parent.left, edges)
@@ -169,21 +154,51 @@ class Tree
     end
   end
 
-  # # checks if tree is balanced: the difference between the heights of left subtree 
-  # # and right subtree of every node is not more than 1
+  # checks if tree is balanced: the difference between the heights of left subtree 
+  # and right subtree of every node is not more than 1
 
-  # def balanced?
-  # end
+  def balanced?(node = root)
+    return true if node.nil?
 
-  # # balances an unbalanced tree
+    left_height = height(node.left)
+    right_height = height(node.right)
 
-  # def rebalance
-  # end
+    return true if (left_height - right_height).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+
+    false
+  end
+
+  # balances an unbalanced tree
+
+  def rebalance
+    self.data = inorder_array
+    self.root = build_tree(data)
+  end
+
+  private
+
+  # helper method that finds the leftmost leaf
+  
+    def leftmost_leaf(node)
+      until node.left.nil?
+        node = node.left
+      end
+      node
+    end
+
+  # create inorder array of tree
+  
+  def inorder_array(node = root, array = [])
+    unless node.nil?
+      inorder_array(node.left, array)
+      array << node.data
+      inorder_array(node.right, array)
+    end
+    array
+  end
 end
 
 array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 tree = Tree.new(array)
-puts tree.height
 binding.pry
-tree.root
-
+puts tree.depth
