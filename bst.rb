@@ -9,12 +9,13 @@ end
 class Node
   include Comparable
 
-  attr_accessor :left, :right, :data
+  attr_accessor :left, :right, :data, :height
 
   def initialize(data)
     @data = data
     @left = nil
     @right = nil
+    @height = 0
   end
 end
 
@@ -133,15 +134,40 @@ class Tree
     end
   end
 
-  # # accepts a node and returns its height
+  # accepts a node and returns its height, also sets the height for each node
+  # height: number of edges from a node to the lowest leaf in its subtree
 
-  # def height(node)
-  # end
+  def height(node = root)
+    
+    node = find(node) unless node.nil? || node.class == Node
 
-  # # accepts a node and returns its depth
+    unless node.nil?
+      height(node.left)
+      height(node.right)
+      unless node.left.nil? && node.right.nil?
+        node.height = (node.left.nil? ? node.right.height + 1 : node.left.height + 1)
+      end
+    end
 
-  # def depth(node)
-  # end
+    return node.nil? ? nil : node.height
+  end
+
+  # accepts a node and returns its depth
+  # depth: number of edges from the root to the given node
+
+  def depth(node = root, parent = root, edges = 0)
+    return 0 if node == parent
+    
+    if node < parent.data
+      edges += 1
+      depth(node, parent.left, edges)
+    elsif node > parent.data
+      edges += 1
+      depth(node, parent.right, edges)
+    else
+      edges
+    end
+  end
 
   # # checks if tree is balanced: the difference between the heights of left subtree 
   # # and right subtree of every node is not more than 1
@@ -157,6 +183,7 @@ end
 
 array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 tree = Tree.new(array)
+puts tree.height
 binding.pry
-puts tree.inorder
+tree.root
 
